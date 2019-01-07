@@ -1,8 +1,24 @@
 {
   "name": "expo-qr-notify",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:watanabeyu/expo-qr-notify.git"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "qr",
+    "notify",
+    "slack"
+  ],
+  "author": "Yu Watanabe <fight.ippatu5648@gmail.com> (https://github.com/watanabeyu)",
+  "bugs": {
+    "url": "https://github.com/watanabeyu/expo-qr-notify/issues"
+  },
+  "homepage": "https://github.com/watanabeyu/expo-qr-notify",
   "dependencies": {
     "node-fetch": "^2.3.0"
   },
