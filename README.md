@@ -42,6 +42,6 @@ Presumably you already know this is happening so it's probably more useful to no
 ## Example
 [Check out example](./example).  
 This is a simple example.  
-If you run circleci, set below variables on [.circleci/config.yml](./example/.circleci/config.yml) or circleci environment variables.
+If you run circleci, set below variables on [.circleci/config.yml](./example/.circleci/config.yml) or circleci environment variables, or set a circleci environment variables.
 * `EXPO_ACCOUNT`
 * `EXPO_PASSWORD`
