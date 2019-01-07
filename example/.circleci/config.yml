@@ -1,0 +1,57 @@
+version: 2
+
+references:
+  container_config: &container_config
+    docker:
+      - image: circleci/node:latest
+        environment:
+          EXPO_ACCOUNT: "enter_your_expo_account"
+          EXPO_PASSWORD: "enter_your_expo_account_password"
+  install_expo_cli: &install_expo_cli
+    run:
+      name: install-expo-cli
+      command: sudo npm install -g expo-cli
+  login_expo_cli: &login_expo_cli
+    run:
+      name: login-expo
+      command: expo login -u $EXPO_ACCOUNT -p $EXPO_PASSWORD --non-interactive
+
+jobs:
+  code_check:
+    <<: *container_config
+    steps:
+      - checkout
+      - restore_cache:
+          keys: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  build:
+    <<: *container_config
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - *install_expo_cli
+      - *login_expo_cli
+      - run:
+          name: publish
+          command: expo publish --release-channel $CIRCLE_SHA1
+      
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - code_check
+      - build:
+          requires:
+            - code_check
