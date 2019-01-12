@@ -16,6 +16,7 @@ module.exports = async ({ url, iosManifest, config }) => {
   const gitServiceToken = process.env.GIT_SERVICE_TOKEN || config.git_service_token;
   const prNumber = process.env.CIRCLE_PULL_REQUEST ? process.env.CIRCLE_PULL_REQUEST.split('/').pop(-1) : null;
   let htmlURL = null;
+  let prTitle = null;
 
   if (gitServiceToken) {
     if (prNumber) {
@@ -30,6 +31,14 @@ module.exports = async ({ url, iosManifest, config }) => {
             body: `v${version} ${publishURL}\n\n![QRURL](${qrURL})`,
           }),
         }).then(res => res.json());
+
+        await fetch(`https://api.github.com/repos/${process.env.CIRCLE_PROJECT_USERNAME}/${process.env.CIRCLE_PROJECT_REPONAME}/pulls/${prNumber}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `token ${gitServiceToken}`,
+          },
+        }).then(res => res.json()).then((r) => { prTitle = r.title; });
 
         htmlURL = response.html_url;
       } catch (e) {
@@ -57,8 +66,9 @@ module.exports = async ({ url, iosManifest, config }) => {
           channel: slack.channel || '',
           attachments: [{
             color: primaryColor || '',
-            title: publishURL,
-            title_link: publishURL,
+            title: process.env.CIRCLE_PULL_REQUEST && `#${prNumber} ${prTitle}`,
+            title_link: process.env.CIRCLE_PULL_REQUEST || null,
+            text: publishURL,
             image_url: qrURL,
             fields: [{
               title: `v${version}`,
